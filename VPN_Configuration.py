@@ -1,8 +1,16 @@
 def makeVPN(classNum, inNet, sslNet,users):
     f = open('VPNconfig.txt','a')
 
+    f.write('''
+object network SSL_CNS{}_NET
+ subnet 10.{}.0.0 255.255.0.0
+!
+nat (inside,outside) source static SSL_CNS{}_NET SSL_CNS{}_NET destination static ADMIN_SSL_NET ADMIN_SSL_NET no-proxy-arp route-lookup
+
+'''.format(classNum,inNet,classNum,classNum))
+
     for i in range(1,users):
-        f.write('''access-list CNS{}_Student{}_SSL_ACL standard permit 10.{}.{}.0 255.0.0.0
+        f.write('''access-list CNS{}_Student{}_SSL_ACL standard permit 10.{}.{}.0 255.255.255.0
 group-policy CNS{}_Student{}_GP internal
 group-policy CNS{}_Student{}_GP attributes
  vpn-tunnel-protocol ssl-client
